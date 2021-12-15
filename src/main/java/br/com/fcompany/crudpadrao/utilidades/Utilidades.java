@@ -4,18 +4,14 @@
  */
 package br.com.fcompany.crudpadrao.utilidades;
 
-import br.com.fcompany.crudpadrao.form.Tela;
-
 /**
  *
  * @author agner
  */
-public class Utilidades {
+public class Utilidades{
     
-    public static void main(String[] args) {
-        
-        
-    }
+    
+    
   
     
     

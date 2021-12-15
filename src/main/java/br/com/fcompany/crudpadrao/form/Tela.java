@@ -7,6 +7,7 @@ package br.com.fcompany.crudpadrao.form;
 import br.com.fcompany.crudpadrao.utilidades.Tabela;
 import br.com.fcompany.crudpadrao.controle.Controle;
 import br.com.fcompany.crudpadrao.domain.Produto;
+import br.com.fcompany.crudpadrao.rn.RegraDeNegocio;
 import br.com.fcompany.crudpadrao.utilidades.Utilidades;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,49 +21,45 @@ import javax.swing.table.DefaultTableModel;
 public class Tela extends javax.swing.JFrame {
 
     Controle controle = new Controle();
-   
-    
+    RegraDeNegocio regra = new RegraDeNegocio();
+
     // CRIACÃO DA TABELA
     JTable tabela;
     DefaultTableModel modelo = new DefaultTableModel();
     Tabela tabelaProduto = new Tabela();
     Utilidades utilidades;
     Produto produto;
-    
+
     public void criarTabela() {
-        
+
         tabela = tabelaProduto.criarTabela(jPanel1,
-                new Object[] {600,600},
-                new Object[] {"centro", "centro"},
-                new Object[] {"ID", "Nome"});
-    
+                new Object[]{600, 600},
+                new Object[]{"centro"},
+                new Object[]{"ID", "Nome"});
+
         modelo = (DefaultTableModel) tabela.getModel();
-        
-        tabela.addMouseListener(new MouseAdapter(){
+
+        tabela.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-               int row = tabela.getSelectedRow();
-                
-                while(row != -1){ 
-                 
-                jTextField1.setText(modelo.getValueAt(row, 0).toString());
+                int row = tabela.getSelectedRow();
+
+                if (row != -1) {
+                    jTextField1.setText(modelo.getValueAt(row, 0).toString());
+                    System.out.println(row);
                 }
-                
             }
-            
-                    
         });
     }
-  
-    public void salvar() throws SQLException{
-        controle.salvarProduto(jTextField2.getText());
-          
+
+    public void salvar() throws SQLException {
+        regra.salvarProduto(jTextField2.getText());
     }
-    
+
     public void carregarTabela() throws SQLException {
         // estou dizendo que minha tabela tem 0 linhas, toda vez que eu fizer uma consulta ele apaga as linhas e seta 0
         modelo.setRowCount(0);
-       
+
         List<Produto> lista = controle.carregarLista();
         Object[] linha = new Object[2];
         for (Produto produto : lista) {
@@ -70,26 +67,23 @@ public class Tela extends javax.swing.JFrame {
             linha[1] = produto.getNome();
             modelo.addRow(linha);
         }
-    
     }
-    
-    public void deletar() throws SQLException{
-        controle.selecionarPorId(jTextField1.getText());
+
+    public void atualizarProduto() throws SQLException {
+        regra.atualizarProduto(jTextField1.getText(), jTextField2.getText());
     }
-    
-    public void consultar(){
-        
+
+    public void deletar() throws SQLException {
+        regra.selecionarPorId(jTextField1.getText());
     }
     
     public Tela() throws SQLException {
         initComponents();
-  
+
         jPanel1.setVisible(true);
         criarTabela();
         carregarTabela();
         jTextField2.requestFocus();
-        
-     
     }
 
     @SuppressWarnings("unchecked")
@@ -105,8 +99,7 @@ public class Tela extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jToggleButton1 = new javax.swing.JToggleButton();
         jPanel1 = new javax.swing.JPanel();
-        jTextField3 = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -158,10 +151,15 @@ public class Tela extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 275, Short.MAX_VALUE)
+            .addGap(0, 313, Short.MAX_VALUE)
         );
 
-        jLabel3.setText("CONSULTA");
+        jButton3.setText("Atualizar");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -173,24 +171,22 @@ public class Tela extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(129, 129, 129)
+                        .addGap(153, 153, 153)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel3))
+                            .addComponent(jLabel1))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(213, 213, 213)
+                        .addGap(195, 195, 195)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)))
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                            .addComponent(jToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -201,23 +197,21 @@ public class Tela extends javax.swing.JFrame {
                         .addGap(22, 22, 22)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1)))
+                            .addComponent(jLabel1))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton1)))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton2))
-                .addGap(22, 22, 22)
-                .addComponent(jToggleButton1)
-                .addGap(7, 7, 7)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jToggleButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)))
+                .addGap(40, 40, 40)
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -232,50 +226,58 @@ public class Tela extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
             salvar();
-            System.out.println(jTextField2.getText());
-        } catch (SQLException ex) {
-            Logger.getLogger(Tela.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-        try {
             carregarTabela();
+            System.out.println(jTextField2.getText());
+            jTextField2.requestFocus();
         } catch (SQLException ex) {
             Logger.getLogger(Tela.class.getName()).log(Level.SEVERE, null, ex);
         }
-        jTextField2.requestFocus();
 
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-     
-        
+
+
     }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         try {
             deletar();
             System.out.println(jTextField1.getText());
+            criarTabela();
+            jTextField2.requestFocus();
         } catch (SQLException ex) {
             Logger.getLogger(Tela.class.getName()).log(Level.SEVERE, null, ex);
         }
-        criarTabela();
-        jTextField2.requestFocus();
-       
+
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         try {
             carregarTabela();
+            jTextField2.requestFocus();
         } catch (SQLException ex) {
             Logger.getLogger(Tela.class.getName()).log(Level.SEVERE, null, ex);
         }
-        jTextField2.requestFocus();
+
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
-    
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+
+        System.out.println("TESTE");
+        try {
+            atualizarProduto();
+            carregarTabela();
+        } catch (SQLException ex) {
+            Logger.getLogger(Tela.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     public static void main(String args[]) {
-      
-        
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -290,16 +292,14 @@ public class Tela extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     public javax.swing.JTextField jTextField1;
     public javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JToggleButton jToggleButton1;
     // End of variables declaration//GEN-END:variables
 
-   
 }

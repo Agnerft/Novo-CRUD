@@ -5,6 +5,7 @@
 package br.com.fcompany.crudpadrao.controle;
 
 import br.com.fcompany.crudpadrao.domain.Produto;
+import br.com.fcompany.crudpadrao.rn.RegraDeNegocio;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -23,27 +24,17 @@ public class Controle {
     PreparedStatement pdst;
     ResultSet result;
     Produto produto = new Produto();
+    RegraDeNegocio regra = new RegraDeNegocio();
 
     public void openConnection() throws SQLException {
 
-        System.out.println("5 Conectou?");
-        con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Cliente", "postgres", "postgres");
+    System.out.println("5 Conectou?");
+    con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Cliente", "postgres", "postgres");
     }
 
-    public void salvarProduto(Object... valor) throws SQLException {
-        Controle controle = new Controle();
-//        Produto produto = new Produto();
-        System.out.println("1 E aqui?");
-
-        produto.setNome((String) valor[0]);
-
-        controle.insereProduto(produto);
-
-    }
-
-    public void insereProduto(Produto produto) throws SQLException {
+    public void insereProduto(Produto produto) throws SQLException { // CONECTA NO BANCO
         openConnection();
-
+        
         System.out.println("2 Passsou aqui?");
         String SQL = "INSERT INTO novoTeste (nome) VALUES (?) RETURNING id";
         pdst = con.prepareStatement(SQL);
@@ -54,21 +45,7 @@ public class Controle {
 
     }
 
-    public void selecionarPorId(Object... valor) throws SQLException {
-        Controle controle = new Controle();
-        //Produto produto = new Produto();
-        System.out.println("SELECT POR ID");
-        if ("".equals(valor[0])) {
-            produto.setId(1);
-        } else {
-            produto.setId(Integer.valueOf((String) valor[0]));
-        }
-
-        controle.deletaProduto(produto.getId());
-
-    }
-
-    public void deletaProduto(int idProduto) throws SQLException {
+    public void deletaProduto(int idProduto) throws SQLException { // CONECTA NO BANCO
 
         openConnection();
 
@@ -79,27 +56,16 @@ public class Controle {
         pdst.execute();
     }
 
-    public void updateProduto(Produto produto, int idProduto) throws SQLException {
+    public void updateProduto(int idProduto, String nome) throws SQLException { // CONECTA NO BANCO
         openConnection();
         String SQL = "UPDATE novoTeste set nome=? where id=?";
         pdst = con.prepareStatement(SQL);
-
         pdst.setInt(2, idProduto);
-        pdst.setString(1, produto.getNome());
+        pdst.setString(1, nome);
         pdst.execute();
     }
 
-    public List<Produto> carregarListaDoBanco() throws SQLException {
-        Controle controle = new Controle();
-        List listaProduto = new LinkedList();
-
-        controle.carregarLista();
-
-        return listaProduto;
-
-    }
-
-    public List<Produto> carregarLista() throws SQLException {
+    public List<Produto> carregarLista() throws SQLException { // CONECTA NO BANCO
         openConnection();
 
         List<Produto> produtos = new LinkedList<>();
@@ -119,11 +85,6 @@ public class Controle {
         }
 
         return produtos;
-    }
-
-    public void consultarProduto() throws SQLException {
-        openConnection();
-
     }
 
     public void closeConnection() throws SQLException {

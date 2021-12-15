@@ -20,7 +20,7 @@ public class Tabela {
         
         tabela.setVisible(true);
         JScrollPane jsp = new JScrollPane(tabela);
-        jsp.setBounds(10, 30, 500, 130);
+        jsp.setBounds(10, 30, 600, 170);
         jsp.setVisible(true);
         jpn.add(jsp);
         
